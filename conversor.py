@@ -17,7 +17,8 @@ def convertir(precio_usd: float, moneda_destino: str, tasas: dict) -> float:
         tasa = tasas["USD"][moneda_destino]
     except KeyError:
         raise ValueError(f"Moneda no soportada: {moneda_destino}")
-    return precio_usd * float(tasa)
+    # 🔹 Redondear el resultado final a 2 decimales
+    return round(precio_usd * float(tasa), 2)
 
 
 def registrar_transaccion(producto: str, precio_convertido: float, moneda: str, ruta_log: str) -> None:
@@ -36,7 +37,8 @@ def actualizar_tasas(ruta: str) -> None:
         for moneda, valor in list(tasas.get("USD", {}).items()):
             # Factor entre 0.98 y 1.02
             factor = 0.98 + (0.04 * random.random())
-            tasas["USD"][moneda] = float(valor) * factor
+            # 🔹 Redondear las tasas a 2 decimales antes de guardarlas
+            tasas["USD"][moneda] = round(float(valor) * factor, 2)
 
         tasas["actualizacion"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -47,7 +49,7 @@ def actualizar_tasas(ruta: str) -> None:
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    #Actualizar las tasas
+    # Actualizar las tasas
     actualizar_tasas("data/tasas.json")
     tasas = cargar_tasas("data/tasas.json")
     precio_usd = 100.00
